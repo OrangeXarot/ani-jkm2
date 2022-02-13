@@ -11,7 +11,9 @@ echo ""
 ## settings
 # colors
 red="\e[1;31m"
-blue="\e[1;34m"
+green="\e[1;32m"
+brown="\e[1;33m" # (Yellow)
+blue="\e[1;34m"  # (Orange)
 violet="\e[1;35m"
 cyan="\e[1;36m"
 colnull="\e[0m"
@@ -54,7 +56,8 @@ function episodeSelect(){
     [ -z "$EP" ] && EP=1
     [ "$EP" = "exit" ] && exit
     [ "$EP" -eq 0 ] && animeOptions
-    [ "$EP" -eq 69 ] && echo "nice"
+    [ "$EP" -eq 69 ] && echo -e "$brown nice$colnull"
+    [ "$EP" -gt "$episodes" ] && echo -e "$red The episode doesn't exist$colnull" && episodeSelect
     streamEpisode
 }
 
@@ -67,17 +70,21 @@ function streamEpisode(){
 
 function episodeCtrl(){
     option=""
-    echo -e "Whatching$violet episode $EP$colnull of $cyan$name$colnull"
+    if [ "$EP" -eq 69 ]; then
+        echo -e "Whatching$violet episode $EP$colnull$brown (nice)$colnull of $cyan$name$colnull"; else
+        echo -e "Whatching$violet episode $EP$colnull of $cyan$name$colnull"; fi
     echo -e "$blue 1 $colnull- Open next episode"
     echo -e "$blue 2 $colnull- Open previous episode"
     echo -e "$blue 0 $colnull- Go back to episode selection"
     read -p "Select option (1): " option
     [ -z "$option" ] && option=1
     [ "$option" = "exit" ] && exit
-    [ "$option" -eq 1 ] && let "EP++" && streamEpisode
-    [ "$option" -eq 2 ] && let "EP--" && streamEpisode
+    [ "$option" -eq 1 ] && let "EP++" 
+    [ "$option" -eq 2 ] && let "EP--"
     [ "$option" -eq 0 ] && episodeSelect
-
+    [ "$EP" -gt "$episodes" ] && echo -e "$red The episode doesn't exist$colnull" && let "EP--" && episodeCtrl
+    [ "$EP" -eq 0 ] && echo -e "$red The episode doesn't exist$colnull" && let "EP++" && episodeCtrl
+    streamEpisode
 }
 
 function listFav(){
