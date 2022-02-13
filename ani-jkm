@@ -8,13 +8,15 @@ echo " /(__)\  )  (  _)(_(___).-_)(   )  (  )    ( "
 echo "(__)(__)(_)\_)(____)    \____) (_)\_)(_/\/\_)"
 echo ""
 
+## settings
+# colors
 red="\e[1;31m"
 blue="\e[1;34m"
 violet="\e[1;35m"
 cyan="\e[1;36m"
 colnull="\e[0m"
 
-## Setting site and files
+# variables
 site=$(echo "https://gogoanime.film") # change when domain changes
 browser=$(echo "librewolf") # change browser for the one you are using
 
@@ -23,7 +25,6 @@ if ! [ -d "~/.config/ani-jkm" ]; then
     touch ~/.config/ani-jkm/history.txt
     touch ~/.config/ani-jkm/favorites.txt
 fi
-favoritesPath=$(echo "~/.config/ani-jkm/favorites.txt")
 
 function searchAnime(){
     ## Search Anime
