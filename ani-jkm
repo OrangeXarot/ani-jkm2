@@ -1,5 +1,9 @@
 #!/bin/bash
 
+## Made by OrangeXarot
+## for FunnySuperst56 (TheGamerMaxAC)
+##
+
 ## Bannner
 function banner(){
     echo -e "$violet   __    _  _  ____ $colnull    $blue  ____  _  _  __  __ $colnull"
