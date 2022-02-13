@@ -41,7 +41,7 @@ function searchAnime(){
 function findAnime(){
     # Finding anime
     [ -z "$anime" ] && anime=$(curl -s "$site/search.html?keyword=$query" | grep -Eo "/category/[a-zA-Z0-9?%-]*" | head -n 1 | sed  "s/\/category\///g")
-    [ -z "$anime" ] && echo "Nothing found" && searchAnime
+    [ -z "$anime" ] && echo -e "$red Nothing found$colnull" && searchAnime
     name=$(echo "$anime" | tr '-' ' ')
     echo -e "Anime found: $cyan$name$colnull"
     animeOptions
