@@ -23,6 +23,7 @@ function searchAnime(){
     ## Search Anime
     read -p "Search anime: " search
     [ -z "$search" ] &&  echo "Empty input (write 0 for going back)" && searchAnime
+    [ "$option" = "exit" ] && exit
     [ "$search" -eq 0 ] &> /dev/null && menu
     query=$(echo "$search" | tr ' ' '+')
 
@@ -44,6 +45,7 @@ function episodeSelect(){
     episodes=$(curl -s "$site/category/$anime" | grep -Eo "0\-[0-9]*" | head -n 1 | sed "s/0-//g")
     read -p "Select episode (1-$episodes): " EP
     [ -z "$EP" ] && EP=1
+    [ "$EP" = "exit" ] && exit
     [ "$EP" -eq 0 ] && animeOptions
     [ "$EP" -eq 69 ] && echo "nice"
     streamEpisode
@@ -64,6 +66,7 @@ function episodeCtrl(){
     echo "0 - go back to episode selection"
     read -p "Select option (1): " option
     [ -z "$option" ] && option=1
+    [ "$option" = "exit" ] && exit
     [ "$option" -eq 1 ] && let "EP++" && streamEpisode
     [ "$option" -eq 2 ] && let "EP--" && streamEpisode
     [ "$option" -eq 0 ] && episodeSelect
@@ -79,6 +82,7 @@ function listFav(){
     echo "0 - go back"
     read -p "Choose anime (1): " num
     [ -z "$num" ] && num=1
+    [ "$num" = "exit" ] && exit
     [ "$num" -eq 0 ] && menu
     anime=$(cat ~/.config/ani-jkm/favorites.txt | sed -n -e "$num p")
     [ -z "$anime" ] && echo "Invalid Number" && listFav
@@ -95,6 +99,7 @@ function favOptions(){
     echo "0 - go back"
     read -p "Choose option (1): " option
     [ -z "$option" ] && option=1
+    [ "$option" = "exit" ] && exit
     [ "$option" -eq 1 ] && episodeSelect
     [ "$option" -eq 2 ] && sed -i ~/.config/ani-jkm/favorites.txt -e "$num d" && listFav
     [ "$option" -eq 0 ] && listFav
@@ -108,6 +113,7 @@ function menu(){
     echo "2 - List Favorite (WIP)"
     read -p "Choose option (1): " option
     [ -z "$option" ] && option=1
+    [ "$option" = "exit" ] && exit
     [ "$option" -eq 1 ] && searchAnime
     [ "$option" -eq 2 ] && listFav
     menu
@@ -120,6 +126,7 @@ function animeOptions(){
     echo "0 - go back"
     read -p "Chose option (1): " option
     [ -z "$option" ] && option=1
+    [ "$option" = "exit" ] && exit
     [ "$option" -eq 1 ] && episodeSelect
     [ "$option" -eq 2 ] && echo "$anime" >> ~/.config/ani-jkm/favorites.txt && listFav
     [ "$option" -eq 0 ] && searchAnime
