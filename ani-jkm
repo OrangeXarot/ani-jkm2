@@ -1,13 +1,13 @@
 #!/bin/bash
 
 ## Bannner
-
-echo "   __    _  _  ____       ____  _  _  __  __ "
-echo "  /__\  ( \( )(_  _)___  (_  _)( )/ )(  \/  )"
-echo " /(__)\  )  (  _)(_(___).-_)(   )  (  )    ( "
-echo "(__)(__)(_)\_)(____)    \____) (_)\_)(_/\/\_)"
-echo ""
-
+function banner(){
+    echo -e "$violet   __    _  _  ____ $colnull    $blue  ____  _  _  __  __ $colnull"
+    echo -e "$violet  /__\  ( \( )(_  _)\e[0m___$blue  (_  _)( )/ )(  \/  )$colnull"
+    echo -e "$violet /(__)\  )  (  _)(_$colnull(___)$blue.-_)(   )  (  )    ( $colnull"
+    echo -e "$violet(__)(__)(_)\_)(____)$colnull   $blue \____) (_)\_)(_/\/\_)$colnull"
+    echo ""
+}
 ## settings
 # colors
 red="\e[1;31m"
@@ -51,13 +51,13 @@ function findAnime(){
 
 function episodeSelect(){
     ## Fetching and selecting episodes
-    episodes=$(curl -s "$site/category/$anime" | grep -Eo "0\-[0-9]*" | head -n 1 | sed "s/0-//g")
+    episodes=$(curl -s "$site/category/$anime" | grep -Eo "0\-[0-9]*" | sed "s/0-//g" | sort -unr | head -n1)
     read -p "Select episode (1-$episodes): " EP
     [ -z "$EP" ] && EP=1
     [ "$EP" = "exit" ] && exit
     [ "$EP" -eq 0 ] && animeOptions
     [ "$EP" -eq 69 ] && echo -e "$brown nice$colnull"
-    [ "$EP" -gt "$episodes" ] && echo -e "$red The episode doesn't exist$colnull" && episodeSelect
+    [ "$EP" -gt "$episodes" ] && echo -e "$red The episode doesn\'t exist$colnull" && episodeSelect
     streamEpisode
 }
 
@@ -149,5 +149,5 @@ function animeOptions(){
 }
 
 
-
+banner
 menu
