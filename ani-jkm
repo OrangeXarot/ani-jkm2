@@ -1,0 +1,130 @@
+#!/bin/bash
+
+## Bannner
+
+echo "   __    _  _  ____       ____  _  _  __  __ "
+echo "  /__\  ( \( )(_  _)___  (_  _)( )/ )(  \/  )"
+echo " /(__)\  )  (  _)(_(___).-_)(   )  (  )    ( "
+echo "(__)(__)(_)\_)(____)    \____) (_)\_)(_/\/\_)"
+echo ""
+
+## Setting site and files
+site=$(echo "https://gogoanime.film")
+if ! [ -d "~/.config/ani-jkm" ]; then
+    mkdir -p ~/.config/ani-jkm/
+    touch ~/.config/ani-jkm/history.txt
+    touch ~/.config/ani-jkm/favorites.txt
+fi
+favoritesPath=$(echo "~/.config/ani-jkm/favorites.txt")
+
+function searchAnime(){
+    ## Search Anime
+    read -p "Search anime: " search
+    [ -z "$search" ] &&  echo "Empty input (write 0 for going back)" && searchAnime
+    [ "$search" -eq 0 ] &> /dev/null && menu
+    query=$(echo "$search" | tr ' ' '+')
+
+    # Cleaning search input
+    anime=""
+    findAnime
+}
+function findAnime(){
+    # Finding anime
+    [ -z "$anime" ] && anime=$(curl -s "$site/search.html?keyword=$query" | grep -Eo "/category/[a-zA-Z0-9?%-]*" | head -n 1 | sed  "s/\/category\///g")
+    [ -z "$anime" ] && echo "Nothing found" && searchAnime
+    name=$(echo "$anime" | tr '-' ' ')
+    echo "Anime found: $name"
+    animeOptions
+}
+
+function episodeSelect(){
+    ## Fetching and selecting episodes
+    episodes=$(curl -s "$site/category/$anime" | grep -Eo "0\-[0-9]*" | head -n 1 | sed "s/0-//g")
+    read -p "Select episode (1-$episodes): " EP
+    [ -z "$EP" ] && EP=1
+    [ "$EP" -eq 0 ] && animeOptions
+    [ "$EP" -eq 69 ] && echo "nice"
+    streamEpisode
+}
+
+function streamEpisode(){
+    ## finding stream and playing it in a browser
+    link=$(curl -s "$site/$anime-episode-$EP" | grep -Eo "gogoplay.io/streaming.php?[a-zA-Z0-9?+&%=-]*"| head -n 1)
+    exec librewolf "https://$link" &> /dev/null &
+    episodeCtrl
+}
+
+function episodeCtrl(){
+    option=""
+    echo "Whatching episode $EP of $name"
+    echo "1 - open next episode"
+    echo "2 - open previous episode"
+    echo "0 - go back to episode selection"
+    read -p "Select option (1): " option
+    [ -z "$option" ] && option=1
+    [ "$option" -eq 1 ] && let "EP++" && streamEpisode
+    [ "$option" -eq 2 ] && let "EP--" && streamEpisode
+    [ "$option" -eq 0 ] && episodeSelect
+
+}
+
+function listFav(){
+    num=""
+    list=$(sed '=' ~/.config/ani-jkm/favorites.txt | tr '-' ' ' | sed 'N; s/\n/ - /')
+    [ -z "$list" ] && echo "You have no favorites" && menu
+    echo "Favorites list - watch or remove an anime"
+    echo "$list"
+    echo "0 - go back"
+    read -p "Choose anime (1): " num
+    [ -z "$num" ] && num=1
+    [ "$num" -eq 0 ] && menu
+    anime=$(cat ~/.config/ani-jkm/favorites.txt | sed -n -e "$num p")
+    [ -z "$anime" ] && echo "Invalid Number" && listFav
+    favOptions
+
+}
+
+function favOptions(){
+    option=""
+    name=$(echo "$anime" | tr '-' ' ')
+    echo "You selected $name, you can:"
+    echo "1 - watch it"
+    echo "2 - remove it "
+    echo "0 - go back"
+    read -p "Choose option (1): " option
+    [ -z "$option" ] && option=1
+    [ "$option" -eq 1 ] && episodeSelect
+    [ "$option" -eq 2 ] && sed -i ~/.config/ani-jkm/favorites.txt -e "$num d" && listFav
+    [ "$option" -eq 0 ] && listFav
+    favOptions
+}
+
+
+function menu(){
+    option=""
+    echo "1 - Search an Anime"
+    echo "2 - List Favorite (WIP)"
+    read -p "Choose option (1): " option
+    [ -z "$option" ] && option=1
+    [ "$option" -eq 1 ] && searchAnime
+    [ "$option" -eq 2 ] && listFav
+    menu
+}
+
+function animeOptions(){
+    option=""
+    echo "1 - Watch"
+    echo "2 - Save in Favourites"
+    echo "0 - go back"
+    read -p "Chose option (1): " option
+    [ -z "$option" ] && option=1
+    [ "$option" -eq 1 ] && episodeSelect
+    [ "$option" -eq 2 ] && echo "$anime" >> ~/.config/ani-jkm/favorites.txt && listFav
+    [ "$option" -eq 0 ] && searchAnime
+    animeOptions
+
+}
+
+
+
+menu
