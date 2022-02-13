@@ -9,7 +9,9 @@ echo "(__)(__)(_)\_)(____)    \____) (_)\_)(_/\/\_)"
 echo ""
 
 ## Setting site and files
-site=$(echo "https://gogoanime.film")
+site=$(echo "https://gogoanime.film") # change when domain changes
+browser=$(echo "librewolf") # change browser for the one you are using
+
 if ! [ -d "~/.config/ani-jkm" ]; then
     mkdir -p ~/.config/ani-jkm/
     touch ~/.config/ani-jkm/history.txt
@@ -50,7 +52,7 @@ function episodeSelect(){
 function streamEpisode(){
     ## finding stream and playing it in a browser
     link=$(curl -s "$site/$anime-episode-$EP" | grep -Eo "gogoplay.io/streaming.php?[a-zA-Z0-9?+&%=-]*"| head -n 1)
-    exec librewolf "https://$link" &> /dev/null &
+    exec $browser "https://$link" &> /dev/null &
     episodeCtrl
 }
 
