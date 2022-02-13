@@ -8,6 +8,12 @@ echo " /(__)\  )  (  _)(_(___).-_)(   )  (  )    ( "
 echo "(__)(__)(_)\_)(____)    \____) (_)\_)(_/\/\_)"
 echo ""
 
+red="\e[1;31m"
+blue="\e[1;34m"
+violet="\e[1;35m"
+cyan="\e[1;36m"
+colnull="\e[0m"
+
 ## Setting site and files
 site=$(echo "https://gogoanime.film") # change when domain changes
 browser=$(echo "librewolf") # change browser for the one you are using
@@ -22,7 +28,7 @@ favoritesPath=$(echo "~/.config/ani-jkm/favorites.txt")
 function searchAnime(){
     ## Search Anime
     read -p "Search anime: " search
-    [ -z "$search" ] &&  echo "Empty input (write 0 for going back)" && searchAnime
+    [ -z "$search" ] &&  echo -e "$red Empty input (write 0 for going back)$colnull" && searchAnime
     [ "$option" = "exit" ] && exit
     [ "$search" -eq 0 ] &> /dev/null && menu
     query=$(echo "$search" | tr ' ' '+')
@@ -36,7 +42,7 @@ function findAnime(){
     [ -z "$anime" ] && anime=$(curl -s "$site/search.html?keyword=$query" | grep -Eo "/category/[a-zA-Z0-9?%-]*" | head -n 1 | sed  "s/\/category\///g")
     [ -z "$anime" ] && echo "Nothing found" && searchAnime
     name=$(echo "$anime" | tr '-' ' ')
-    echo "Anime found: $name"
+    echo -e "Anime found: $cyan$name$colnull"
     animeOptions
 }
 
@@ -60,10 +66,10 @@ function streamEpisode(){
 
 function episodeCtrl(){
     option=""
-    echo "Whatching episode $EP of $name"
-    echo "1 - open next episode"
-    echo "2 - open previous episode"
-    echo "0 - go back to episode selection"
+    echo -e "Whatching$violet episode $EP$colnull of $cyan$name$colnull"
+    echo -e "$blue 1 $colnull- Open next episode"
+    echo -e "$blue 2 $colnull- Open previous episode"
+    echo -e "$blue 0 $colnull- Go back to episode selection"
     read -p "Select option (1): " option
     [ -z "$option" ] && option=1
     [ "$option" = "exit" ] && exit
@@ -75,11 +81,11 @@ function episodeCtrl(){
 
 function listFav(){
     num=""
-    list=$(sed '=' ~/.config/ani-jkm/favorites.txt | tr '-' ' ' | sed 'N; s/\n/ - /')
+    list=$(sed '=' ~/.config/ani-jkm/favorites.txt | tr '-' ' ' | sed 'N; s/\n/\\e[0m - /' | sed 's/^/ \\e[1;34m/')
     [ -z "$list" ] && echo "You have no favorites" && menu
     echo "Favorites list - watch or remove an anime"
-    echo "$list"
-    echo "0 - go back"
+    echo -e "$list"
+    echo -e "$blue 0 $colnull- go back"
     read -p "Choose anime (1): " num
     [ -z "$num" ] && num=1
     [ "$num" = "exit" ] && exit
@@ -93,10 +99,10 @@ function listFav(){
 function favOptions(){
     option=""
     name=$(echo "$anime" | tr '-' ' ')
-    echo "You selected $name, you can:"
-    echo "1 - watch it"
-    echo "2 - remove it "
-    echo "0 - go back"
+    echo -e "You selected $cyan$name$colnull, you can:"
+    echo -e "$blue 1 $colnull- watch it"
+    echo -e "$blue 2 $colnull- remove it "
+    echo -e "$blue 0 $colnull- go back"
     read -p "Choose option (1): " option
     [ -z "$option" ] && option=1
     [ "$option" = "exit" ] && exit
@@ -109,8 +115,8 @@ function favOptions(){
 
 function menu(){
     option=""
-    echo "1 - Search an Anime"
-    echo "2 - List Favorite (WIP)"
+    echo -e "$blue 1 $colnull- Search an Anime"
+    echo -e "$blue 2 $colnull- List Favorite (WIP)"
     read -p "Choose option (1): " option
     [ -z "$option" ] && option=1
     [ "$option" = "exit" ] && exit
@@ -121,9 +127,9 @@ function menu(){
 
 function animeOptions(){
     option=""
-    echo "1 - Watch"
-    echo "2 - Save in Favourites"
-    echo "0 - go back"
+    echo -e "$blue 1 $colnull- Watch"
+    echo -e "$blue 2 $colnull- Save in Favourites"
+    echo -e "$blue 0 $colnull- Go back"
     read -p "Chose option (1): " option
     [ -z "$option" ] && option=1
     [ "$option" = "exit" ] && exit
