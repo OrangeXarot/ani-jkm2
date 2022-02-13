@@ -63,7 +63,7 @@ function episodeSelect(){
 
 function streamEpisode(){
     ## finding stream and playing it in a browser
-    link=$(curl -s "$site/$anime-episode-$EP" | grep -Eo "gogoplay.io/streaming.php?[a-zA-Z0-9?+&%=-]*"| head -n 1)
+    link=$(curl -s "$site/$anime-episode-$EP" | grep -Eo "fembed-hd.com/v/[a-z0-9]*"| head -n 1)
     exec $browser "https://$link" &> /dev/null &
     episodeCtrl
 }
@@ -124,7 +124,7 @@ function favOptions(){
 function menu(){
     option=""
     echo -e "$blue 1 $colnull- Search an Anime"
-    echo -e "$blue 2 $colnull- List Favorite (WIP)"
+    echo -e "$blue 2 $colnull- List Favorite"
     read -p "Choose option (1): " option
     [ -z "$option" ] && option=1
     [ "$option" = "exit" ] && exit
