@@ -23,7 +23,7 @@ cyan="\e[1;36m"
 colnull="\e[0m"
 
 # variables
-site=$(echo "https://gogoanime.film") # change when domain changes
+site=$(echo "https://gogoanime.gg") # change when domain changes
 browser=$(echo "librewolf") # change browser for the one you are using
 
 if ! [ -d "~/.config/ani-jkm" ]; then mkdir -p ~/.config/ani-jkm/; fi
@@ -77,7 +77,7 @@ function episodeSelect(){
 
 function streamEpisode(){
     ## finding stream and playing it in a browser
-    link=$(curl -s "$site/$anime-episode-$EP" | grep -Eo "fembed-hd.com/v/[a-z0-9-]*" | head -n1)
+    link=$(curl -s "$site/$anime-episode-$EP" | grep -Eo "gogoplay4.com/streaming.php[a-z0-9A-Z?=&+-]*" | head -n1)
     exec $browser "https://$link" &> /dev/null &
     episodeCtrl
 }
